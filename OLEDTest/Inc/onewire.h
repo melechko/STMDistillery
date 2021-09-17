@@ -36,6 +36,8 @@ uint8_t OW_Init(void);
 
 void OW_Search1(void);
 uint8_t OW_Search2(owdevice_t *owdevices);
+void _OW_Reset(void);
+uint8_t _OW_SwapByte(uint8_t data);
 
 
 #endif /* ONEWIRE_H_ */

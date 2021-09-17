@@ -26,6 +26,7 @@
 #include "fonts.h"
 #include "ssd1306.h"
 #include "BME280.h"
+#include "TM1638.h"
 #include "test.h"
 #include "bitmap.h"
 #include "horse_anim.h"
@@ -83,14 +84,14 @@ void MX_USART1_UART_Init(uint32_t baud);
 /* USER CODE BEGIN 0 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if (htim->Instance==TIM1) //check if the interrupt comes from TIM1
+/*  if (htim->Instance==TIM1) //check if the interrupt comes from TIM1
   {
   HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13); //Toggle the state of pin
   }
   if (htim->Instance==TIM4) //check if the interrupt comes from TIM1
     {
 	  GetDeviceData();
-    }
+    }*/
 }
 /* USER CODE END 0 */
 
@@ -134,8 +135,9 @@ int main(void)
   SSD1306_Puts ("Start...", &Font_11x18, 1);
   SSD1306_UpdateScreen();
   NVIC_SetPriority(TIM4_IRQn, 15);
-  ds18b20_init();
+ // ds18b20_init();
   BME280_Init();
+
  //
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_Base_Start_IT(&htim4);
@@ -143,129 +145,53 @@ int main(void)
   HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
   //HAL_TIM_OC_Start_IT(&htim4, TIM_CHANNEL_1);
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
- uint8_t str1[64];
- str1[0]=0x8c;
- HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
 
- HAL_SPI_Transmit(&hspi2,str1,1,500);
- HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
 
- str1[0]=0x44;
- str1[1]=0xc1;
- str1[2]=0x81;
- HAL_Delay(1);
- HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
+  uint8_t n=0;
+  uint8_t buff[16];
+  uint8_t str1[64];
+  TM1638_Init();
 
- HAL_SPI_Transmit(&hspi2,str1,1,500);
- HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
- HAL_Delay(1);
- HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
- HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
- HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
- str1[0]=0x44;
-  str1[1]=0xc3;
-  str1[2]=0x81;
-  HAL_Delay(1);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-  HAL_SPI_Transmit(&hspi2,str1,1,500);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-  HAL_Delay(1);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-  HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-  str1[0]=0x44;
-   str1[1]=0xc5;
-   str1[2]=0x81;
-   HAL_Delay(1);
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-   HAL_SPI_Transmit(&hspi2,str1,1,500);
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-   HAL_Delay(1);
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-   HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-   str1[0]=0x44;
-    str1[1]=0xc7;
-    str1[2]=0x81;
-    HAL_Delay(1);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-    HAL_SPI_Transmit(&hspi2,str1,1,500);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-    HAL_Delay(1);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-    HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-    str1[0]=0x44;
-     str1[1]=0xc9;
-     str1[2]=0x81;
-     HAL_Delay(1);
-     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-     HAL_SPI_Transmit(&hspi2,str1,1,500);
-     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-     HAL_Delay(1);
-     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-     HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-     str1[0]=0x44;
-      str1[1]=0xcb;
-      str1[2]=0x81;
-      HAL_Delay(1);
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-      HAL_SPI_Transmit(&hspi2,str1,1,500);
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-      HAL_Delay(1);
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-      HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-      str1[0]=0x44;
-       str1[1]=0xcd;
-       str1[2]=0x81;
-       HAL_Delay(1);
-       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-       HAL_SPI_Transmit(&hspi2,str1,1,500);
-       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-       HAL_Delay(1);
-       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-       HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
- /*str1[0]=0x44;
-  str1[1]=0xc2;
-  str1[2]=0x80;
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-
-   HAL_SPI_Transmit(&hspi2,str1,1,500);
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);
-
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_RESET);
-   HAL_SPI_Transmit(&hspi2,&str1[1],2,500);
-   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);*/
   while (1)
   {
-	//  ds18b20_start_convert();
+
+	  if(TM1638_ReadKey()){
+			for(int i=0;i<8;i++){
+				TM1638_Led(i,tm1638_keys&(1<<i));
+			}
+			TM1638_Update();
+	  }
+	 	//  ds18b20_start_convert();
 	 // HAL_Delay(1000);
 
-	  //ds18b20_start_convert();
-	 // HAL_Delay(1000);
-	 // GetDeviceData();
-	  HAL_Delay(100);
-	  if(owdevices){
+	/*  ds18b20_start_convert();
+	  HAL_Delay(1000);
+	  GetDeviceData();*/
+	/*  _OW_Reset();
+	  buff[0]=0xcc;
+	  buff[1]=0x44;
+	  buff[0]=_OW_SwapByte(buff[0]);
+	  buff[1]=_OW_SwapByte(buff[1]);
+	  HAL_Delay(1000);
+	  _OW_Reset();
+	  buff[0]=0xcc;
+	  buff[1]=0xbe;
+	  buff[2]=0xff;
+	  buff[3]=0xff;
+	  buff[0]=_OW_SwapByte(buff[0]);
+	  buff[1]=_OW_SwapByte(buff[1]);
+	  buff[2]=_OW_SwapByte(buff[2]);
+	  buff[3]=_OW_SwapByte(buff[3]);
+	  sprintf(str1,"%4.2f ",ds18b20_tconvert(buff[2],buff[3]));
+	  SSD1306_GotoXY (0,0*20);
+	  SSD1306_Puts (str1, &Font_11x18, 1);
+	  n++;*/
+	 /* if(owdevices){
 	    sprintf(str1,"%4.2f ",ds18_sensors[0].temp);
 	    SSD1306_GotoXY (0,0*20);
 	    SSD1306_Puts (str1, &Font_11x18, 1);
@@ -284,7 +210,8 @@ int main(void)
 	  }
 	  }
 	  }
-	  }
+	  }*/
+
 	  sprintf(str1,"%.2f'C %.2fmm    ",BME280_ReadTemperature(),BME280_ReadPressure()*0.000750061683f);
 	  SSD1306_GotoXY (0,2*20);
 	  SSD1306_Puts (str1, &Font_7x10, 1);
@@ -293,7 +220,7 @@ int main(void)
 	  SSD1306_Puts (str1, &Font_7x10, 1);
 	  SSD1306_UpdateScreen();
 
-printf("ssss\n");
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -320,7 +247,7 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -333,7 +260,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -577,10 +504,10 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-/** 
+/**
   * Enable DMA controller clock
   */
-static void MX_DMA_Init(void) 
+static void MX_DMA_Init(void)
 {
 
   /* DMA controller clock enable */
@@ -682,7 +609,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

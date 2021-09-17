@@ -26,7 +26,6 @@ static uint8_t data_len;
 static uint8_t current_pos;
 
 
-
 static void OW_toBits(uint8_t ow_byte, uint8_t *ow_bits) {
 	uint8_t i;
 	for (i = 0; i < 8; i++) {
@@ -45,9 +44,10 @@ static uint8_t OW_toByte(uint8_t *ow_bits) {
 	ow_byte = 0;
 	for (i = 0; i < 8; i++) {
 		ow_byte = ow_byte >> 1;
-		if (*ow_bits == OW_R_1) {
+		if (*ow_bits == OW_1) {
 			ow_byte |= 0x80;
 		}
+
 		ow_bits++;
 	}
 	return ow_byte;
@@ -63,12 +63,13 @@ static uint8_t ProcessData(void) {
 	    huart2.Init.Parity = UART_PARITY_NONE;
 		huart2.Init.Mode = UART_MODE_TX_RX;
 		huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-		//huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+		huart2.Init.OverSampling = UART_OVERSAMPLING_16;
 	    HAL_HalfDuplex_Init(&huart2);
 
 		ow_buf[0]=0xf0;
-		HAL_UART_Receive_DMA(&huart2,ow_buf,1);
+
 		HAL_UART_Transmit_DMA(&huart2,ow_buf,1);
+		HAL_UART_Receive_DMA(&huart2,ow_buf,1);
 		return 0;
 	}
     if((ow_state&OW_STATE_RESET2)){
@@ -79,7 +80,7 @@ static uint8_t ProcessData(void) {
       huart2.Init.Parity = UART_PARITY_NONE;
       huart2.Init.Mode = UART_MODE_TX_RX;
       huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-      //huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+      huart2.Init.OverSampling = UART_OVERSAMPLING_16;
       HAL_HalfDuplex_Init(&huart2);
       ow_state&=~OW_STATE_RESET2;
       if(ow_buf[0]==0xf0){
@@ -96,12 +97,17 @@ static uint8_t ProcessData(void) {
       if(current_pos<data_len){
 		OW_toBits(data[current_pos], ow_buf);
 		current_pos++;
-		if(HAL_UART_Receive_DMA(&huart2,ow_buf,8)!=HAL_OK){
-			return 0;
-		}
-		if(HAL_UART_Transmit_DMA(&huart2,ow_buf,8)!=HAL_OK){
-			return 0;
-		}
+		HAL_StatusTypeDef err=HAL_UART_Transmit_DMA(&huart2,ow_buf,8);
+				if(err!=HAL_OK){
+							//return 0;
+						}
+		 err=HAL_UART_Receive_DMA(&huart2,ow_buf,8);
+		if(err!=HAL_OK){
+					//return 0;
+				}
+
+
+
 	    return 1;
 	 }
       ow_state&=~OW_STATE_SEND;
@@ -115,14 +121,14 @@ static uint8_t ProcessData(void) {
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *uarth){
 		if (uarth->Instance == USART2){
-		   if(uarth->gState!=HAL_UART_STATE_BUSY_TX)
-		     ProcessData();
+		   if((uarth->RxState==HAL_UART_STATE_READY));
+		     //ProcessData();
 		}
 }
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *uarth){
 		if (uarth->Instance == USART2){
-			if(uarth->RxState!=HAL_UART_STATE_BUSY_RX)
-		      ProcessData();
+			if((uarth->gState==HAL_UART_STATE_READY));
+		     // ProcessData();
 		}
 }
 
@@ -185,9 +191,11 @@ void OW_Search1(void)
 
 
 
-        uint8_t cmd = OW_CMD_SEARCH;
-        ow_state|=OW_STATE_SEARCH;
-        OW_Send(OW_SEND_RESET, &cmd, sizeof(cmd));
+       // uint8_t cmd = OW_CMD_SEARCH;
+       // ow_state|=OW_STATE_SEARCH;
+       // OW_Send(OW_SEND_RESET, &cmd, sizeof(cmd));
+	_OW_Reset();
+	_OW_SwapByte(OW_CMD_SEARCH);
 
 
 }
@@ -285,3 +293,42 @@ uint8_t OW_Search2(owdevice_t *owdevices)
 
 	return search_result;
 }
+void _OW_Reset(void){
+	huart2.Instance = USART2;
+    huart2.Init.BaudRate = 9600;
+    huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.StopBits = UART_STOPBITS_1;
+    huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.Mode = UART_MODE_TX_RX;
+	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+    HAL_HalfDuplex_Init(&huart2);
+
+	ow_buf[0]=0xf0;
+
+	HAL_UART_Transmit_DMA(&huart2,ow_buf,1);
+	HAL_UART_Receive_DMA(&huart2,ow_buf,1);
+	while(hdma_usart2_rx.State==HAL_DMA_STATE_BUSY){
+		HAL_Delay(1);
+	}
+	huart2.Instance = USART2;
+	huart2.Init.BaudRate = 115200;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.StopBits = UART_STOPBITS_1;
+	huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.Mode = UART_MODE_TX_RX;
+	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+	HAL_HalfDuplex_Init(&huart2);
+	//      ow_state&=~OW_STATE_RESET2;
+	//      if(ow_buf[0]==0xf0){
+};
+uint8_t _OW_SwapByte(uint8_t data){
+	uint8_t buff[8];
+	OW_toBits(data,buff);
+	for(int i=0;i<8;i++){
+		HAL_UART_Transmit(&huart2,&buff[i],1,100);
+		HAL_UART_Receive(&huart2,&buff[i],1,100);
+	}
+	data=OW_toByte(buff);
+};

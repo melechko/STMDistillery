@@ -34,22 +34,15 @@ uint8_t ds18b20_init(void)
     LastDeviceFlag = 0;
     DeviceID = 0;
     while(1){
-    OW_Search1();
-    while((!(ow_state&OW_STATE_COMPLEATE))&&(!(ow_state&OW_STATE_ERR)));
-    if(ow_state&OW_STATE_COMPLEATE){
-      ow_state=0;
+      OW_Search1();
       if(OW_Search2(ds18_sensors)){
         if(ds18b20_crc8(ds18_sensors[owdevices].rom_code, 7) == ds18_sensors[owdevices].rom_code[7]) {
-            owdevices++;
+          owdevices++;
         }
       }
       else
     	break;
     }
-    else
-      break;
-    }
-    ow_state=0;
     return owdevices;
 }
 
