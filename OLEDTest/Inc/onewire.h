@@ -3,7 +3,7 @@
 
 #include "stm32f1xx_hal.h"
 
-#define OW_SEND_RESET	1
+/*#define OW_SEND_RESET	1
 #define OW_NO_RESET		2
 
 #define OW_OK			1
@@ -21,9 +21,9 @@ uint8_t ow_state;
 #include "stm32f1xx_hal.h"
 #define OW_STATE_SEARCH  16
 #define OW_STATE_ERR 128
-uint8_t LastDiscrepancy;       /*!< Search private */
-uint8_t LastDeviceFlag;        /*!< Search private */
-uint8_t DeviceID;
+uint8_t LastDiscrepancy;
+uint8_t LastDeviceFlag;
+uint8_t DeviceID;*/
 
 typedef struct
 {
@@ -31,11 +31,11 @@ typedef struct
     uint8_t id;
     float temp;
 }owdevice_t;
-extern void ds18b20Compleate(uint8_t *data);
-uint8_t OW_Init(void);
 
-void OW_Search1(void);
-uint8_t OW_Search2(owdevice_t *owdevices);
+
+//void OW_Search1(void);
+extern uint8_t owdevices;
+uint8_t OW_Search(owdevice_t *owdevices_);
 void _OW_Reset(void);
 uint8_t _OW_SwapByte(uint8_t data);
 

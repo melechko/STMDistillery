@@ -29,7 +29,6 @@
 #include "TM1638.h"
 #include "test.h"
 #include "bitmap.h"
-#include "horse_anim.h"
 #include "onewire.h"
 /* USER CODE END Includes */
 
@@ -61,6 +60,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
+volatile uint32_t timer1=0;
 
 /* USER CODE END PV */
 
@@ -135,7 +135,8 @@ int main(void)
   SSD1306_Puts ("Start...", &Font_11x18, 1);
   SSD1306_UpdateScreen();
   NVIC_SetPriority(TIM4_IRQn, 15);
- // ds18b20_init();
+  TM1638_Init();
+  ds18b20_init();
   BME280_Init();
 
  //
@@ -155,70 +156,70 @@ int main(void)
   uint8_t n=0;
   uint8_t buff[16];
   uint8_t str1[64];
-  TM1638_Init();
 
+  SSD1306_GotoXY (0,0);
+  sprintf(str1,"Device found %d", owdevices);
+  SSD1306_Puts (str1, &Font_7x10, 1);
+  SSD1306_UpdateScreen();
+  uint16_t keys;
   while (1)
   {
-
-	  if(TM1638_ReadKey()){
+	  HAL_Delay(5);
+	  if(keys=TM1638_ReadKey()){
 			for(int i=0;i<8;i++){
 				TM1638_Led(i,tm1638_keys&(1<<i));
 			}
 			TM1638_Update();
+			if(keys&0x80){
+				ds18b20_init();
+				SSD1306_GotoXY (0,0);
+			    sprintf(str1,"Device found\n %d", owdevices);
+				SSD1306_Puts (str1, &Font_7x10, 1);
+				if(owdevices){
+				     ds18b20_start_convert();
+			    }
+				timer1=0;
+			}
 	  }
-	 	//  ds18b20_start_convert();
-	 // HAL_Delay(1000);
+	 	      if(timer1>800){
+    	 if(owdevices){
+    		 for(uint8_t i=0;i<owdevices;i++)
+    			 ds18b20_get_temp(i);
+    	  	 ds18b20_start_convert();
+    		 if(owdevices){
+    		 	    sprintf(str1,"%4.2f ",ds18_sensors[0].temp);
+    		 	    SSD1306_GotoXY (0,0*20);
+    		 	    SSD1306_Puts (str1, &Font_11x18, 1);
+    		 	  if(owdevices>1){
+    		 		sprintf(str1,"%4.2f ",ds18_sensors[1].temp);
+    		 		SSD1306_GotoXY (64,0*20);
+    		 		SSD1306_Puts (str1, &Font_11x18, 1);
+    		 	  if(owdevices>2){
+    		 	    sprintf(str1,"%4.2f ",ds18_sensors[2].temp);
+    		 		SSD1306_GotoXY (0,1*20);
+    		 		SSD1306_Puts (str1, &Font_11x18, 1);
+    		 	  if(owdevices>3){
+    		 		sprintf(str1,"%4.2f ",ds18_sensors[3].temp);
+    		 		SSD1306_GotoXY (64,1*20);
+    		 		SSD1306_Puts (str1, &Font_11x18, 1);
+    		 	  }
+    		 	  }
+    		 	  }
+    		 	  }
+    	 }
+	    sprintf(str1,"%.2f'C %.2fmm    ",BME280_ReadTemperature(),BME280_ReadPressure()*0.000750061683f);
+	    SSD1306_GotoXY (0,2*20);
+	    SSD1306_Puts (str1, &Font_7x10, 1);
+	    sprintf(str1,"%.1f%%     ",BME280_ReadHumidity());
+	    SSD1306_GotoXY (0,2*20+10);
+	    SSD1306_Puts (str1, &Font_7x10, 1);
+	    SSD1306_UpdateScreen();
+	    timer1=0;
+     }
+      else{
+    	  HAL_Delay(25);
+      }
 
-	/*  ds18b20_start_convert();
-	  HAL_Delay(1000);
-	  GetDeviceData();*/
-	/*  _OW_Reset();
-	  buff[0]=0xcc;
-	  buff[1]=0x44;
-	  buff[0]=_OW_SwapByte(buff[0]);
-	  buff[1]=_OW_SwapByte(buff[1]);
-	  HAL_Delay(1000);
-	  _OW_Reset();
-	  buff[0]=0xcc;
-	  buff[1]=0xbe;
-	  buff[2]=0xff;
-	  buff[3]=0xff;
-	  buff[0]=_OW_SwapByte(buff[0]);
-	  buff[1]=_OW_SwapByte(buff[1]);
-	  buff[2]=_OW_SwapByte(buff[2]);
-	  buff[3]=_OW_SwapByte(buff[3]);
-	  sprintf(str1,"%4.2f ",ds18b20_tconvert(buff[2],buff[3]));
-	  SSD1306_GotoXY (0,0*20);
-	  SSD1306_Puts (str1, &Font_11x18, 1);
-	  n++;*/
-	 /* if(owdevices){
-	    sprintf(str1,"%4.2f ",ds18_sensors[0].temp);
-	    SSD1306_GotoXY (0,0*20);
-	    SSD1306_Puts (str1, &Font_11x18, 1);
-	  if(owdevices>1){
-		sprintf(str1,"%4.2f ",ds18_sensors[1].temp);
-		SSD1306_GotoXY (64,0*20);
-		SSD1306_Puts (str1, &Font_11x18, 1);
-	  if(owdevices>2){
-	    sprintf(str1,"%4.2f ",ds18_sensors[2].temp);
-		SSD1306_GotoXY (0,1*20);
-		SSD1306_Puts (str1, &Font_11x18, 1);
-	  if(owdevices>3){
-		sprintf(str1,"%4.2f ",ds18_sensors[3].temp);
-		SSD1306_GotoXY (64,1*20);
-		SSD1306_Puts (str1, &Font_11x18, 1);
-	  }
-	  }
-	  }
-	  }*/
-
-	  sprintf(str1,"%.2f'C %.2fmm    ",BME280_ReadTemperature(),BME280_ReadPressure()*0.000750061683f);
-	  SSD1306_GotoXY (0,2*20);
-	  SSD1306_Puts (str1, &Font_7x10, 1);
-	  sprintf(str1,"%.1f%%     ",BME280_ReadHumidity());
-	  SSD1306_GotoXY (0,2*20+10);
-	  SSD1306_Puts (str1, &Font_7x10, 1);
-	  SSD1306_UpdateScreen();
 
 
     /* USER CODE END WHILE */

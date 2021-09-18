@@ -16,8 +16,7 @@ C_SRCS += \
 ../Src/stm32f1xx_it.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c \
-../Src/system_stm32f1xx.c \
-../Src/test.c 
+../Src/system_stm32f1xx.c 
 
 OBJS += \
 ./Src/BME280.o \
@@ -31,8 +30,7 @@ OBJS += \
 ./Src/stm32f1xx_it.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o \
-./Src/system_stm32f1xx.o \
-./Src/test.o 
+./Src/system_stm32f1xx.o 
 
 C_DEPS += \
 ./Src/BME280.d \
@@ -46,8 +44,7 @@ C_DEPS += \
 ./Src/stm32f1xx_it.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d \
-./Src/system_stm32f1xx.d \
-./Src/test.d 
+./Src/system_stm32f1xx.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

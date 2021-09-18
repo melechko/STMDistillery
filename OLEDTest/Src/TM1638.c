@@ -105,9 +105,5 @@ uint16_t TM1638_ReadKey(){
 	    tm1638_keys=keys;
 	    return (data[1]<<8)|data[0];
 
-	////for(int i=0;i<8;i++){
-	//	TM1638_Led(i,tm1638_keys&(1<<i));
-	//}
-	//TM1638_Update();
-	//return 1;
+
 };

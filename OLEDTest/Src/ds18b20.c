@@ -5,8 +5,8 @@
 
       //rom code
 uint8_t owdevices = 0;
-uint32_t ow_tickstart=0;
-static uint8_t curr_device=0xff;//devices index
+//uint32_t ow_tickstart=0;
+//static uint8_t curr_device=0xff;//devices index
 
 uint8_t ds18b20_crc8(uint8_t *addr, uint8_t len) {
 	uint8_t crc = 0, inbyte, i, mix;
@@ -27,52 +27,14 @@ uint8_t ds18b20_crc8(uint8_t *addr, uint8_t len) {
 
 uint8_t ds18b20_init(void)
 {
-    if(!OW_Init()) {
-        return 0;
-    }
-    LastDiscrepancy = 0;   /* Reset the search */
-    LastDeviceFlag = 0;
-    DeviceID = 0;
-    while(1){
-      OW_Search1();
-      if(OW_Search2(ds18_sensors)){
-        if(ds18b20_crc8(ds18_sensors[owdevices].rom_code, 7) == ds18_sensors[owdevices].rom_code[7]) {
-          owdevices++;
-        }
-      }
-      else
-    	break;
-    }
+	//timer1=0;
+
+	owdevices=0;
+
+
+    OW_Search(ds18_sensors);
     return owdevices;
 }
-
-uint8_t ds18b20_start_convert(void)
-{
-    uint8_t send_buf[2] = {0xcc, 0x44};
-    OW_Send(OW_SEND_RESET, send_buf, sizeof(send_buf));
-
-    return 0;
-}
-
-void ds18b20_get_temp(uint8_t dev_id)
-{
-  //  uint8_t fbuf[2];
-    uint8_t send_buf[12];
-
-
-
-    send_buf[0] = 0x55;
-    memcpy(&send_buf[1], ds18_sensors[dev_id].rom_code, 8);
-    send_buf[9] = 0xbe;
-    send_buf[10] = 0xff;
-    send_buf[11] = 0xff;
-
-    OW_Send(OW_SEND_RESET, send_buf, sizeof(send_buf));//, fbuf, sizeof(fbuf), 10);
-
-    //temp = ds18b20_tconvert(fbuf[0], fbuf[1]);
-
-}
-
 float ds18b20_tconvert(uint8_t LSB, uint8_t MSB)
 {
     float data;
@@ -90,40 +52,31 @@ float ds18b20_tconvert(uint8_t LSB, uint8_t MSB)
 
     return data ;
 }
-void ds18b20Compleate(uint8_t *data){
-	if(curr_device>owdevices){
-		//Команда конвертации
-		//ow_state&=~OW_STATE_COMPLEATE;
+uint8_t ds18b20_start_convert(void)
+{
+	uint8_t buff[2];
+	_OW_Reset();
+    buff[0]=0xcc;
+    buff[1]=0x44;
+    buff[0]=_OW_SwapByte(buff[0]);
+    buff[1]=_OW_SwapByte(buff[1]);
+    return 0;
+}
 
-	}
-	else{
-		if(ow_state==OW_STATE_COMPLEATE){
-		  ds18_sensors[curr_device].temp= ds18b20_tconvert(data[10], data[11]);
-		  ow_state=OW_STATE_NULL;
-		  curr_device++;
-		}
+void ds18b20_get_temp(uint8_t dev_id)
+{
 
-		//else
-		//	GetDeviceData();
-	}
+	uint8_t buff[12];
+	_OW_Reset();
+    buff[0]=0x55;
+    memcpy(&buff[1], ds18_sensors[dev_id].rom_code, 8);
+	buff[9]=0xbe;
+    buff[10]=0xff;
+	buff[11]=0xff;
+	for(int i=0;i<12;i++)
+	  buff[i]=_OW_SwapByte(buff[i]);
+	ds18_sensors[dev_id].temp= ds18b20_tconvert(buff[10], buff[11]);
 
-};
-void GetDeviceData(){
-	if(curr_device==owdevices){
-				curr_device=0xff;
-				ow_tickstart = HAL_GetTick();
-			    ds18b20_start_convert();
-			    return;
-			}
-	if(curr_device>owdevices){
-		if(HAL_GetTick()-ow_tickstart>1000){
-		  if((ow_state==OW_STATE_COMPLEATE)||(ow_state==OW_STATE_NULL)){
-			  ow_state&=~OW_STATE_COMPLEATE;
-		      curr_device=0;
-		  }
-		}
-	}
-	else
-	if(ow_state==OW_STATE_NULL)
-	  ds18b20_get_temp(curr_device);
-};
+}
+
+
