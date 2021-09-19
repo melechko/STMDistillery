@@ -145,7 +145,7 @@ int main(void)
   SSD1306_UpdateScreen();*/
 
   NVIC_SetPriority(TIM4_IRQn, 15);
-  TM1638_Init();
+
   gScreen= new CStartScreen();
 
   BME280_Init();
@@ -156,6 +156,7 @@ int main(void)
 
   HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
   //HAL_TIM_OC_Start_IT(&htim4, TIM_CHANNEL_1);
+  TM1638_Init();
   gScreen->Init();
 
   /* USER CODE END 2 */
