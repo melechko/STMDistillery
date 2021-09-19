@@ -23,9 +23,9 @@
 #define FONTS_H 120
 
 /* C++ detection */
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 extern C {
-#endif
+#endif*/
 
 /**
  *
@@ -87,7 +87,7 @@ extern FontDef_t Font_11x18;
 /**
  * @brief  16 x 26 pixels font size structure 
  */
-extern FontDef_t Font_16x26;
+//extern FontDef_t Font_16x26;
 
 /**
  * @}
@@ -121,9 +121,9 @@ char* FONTS_GetStringSize(char* str, FONTS_SIZE_t* SizeStruct, FontDef_t* Font);
  */
 
 /* C++ detection */
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 }
-#endif
+#endif*/
 
  
 #endif

@@ -24,9 +24,9 @@
 #define SSD1306_H 100
 
 /* C++ detection */
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 extern C {
-#endif
+#endif*/
 
 /**
  * This SSD1306 LCD uses I2C for communication
@@ -302,8 +302,8 @@ void SSD1306_Clear (void);
 
 
 /* C++ detection */
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 }
-#endif
+#endif*/
 
 #endif

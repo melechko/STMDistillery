@@ -31,6 +31,23 @@ static uint8_t data_len;
 static uint8_t current_pos;*/
 
 
+uint8_t ds18b20_crc8(uint8_t *addr, uint8_t len) {
+	uint8_t crc = 0, inbyte, i, mix;
+
+	while (len--) {
+		inbyte = *addr++;
+		for (i = 8; i; i--) {
+			mix = (crc ^ inbyte) & 0x01;
+			crc >>= 1;
+			if (mix) {
+				crc ^= 0x8C;
+			}
+			inbyte >>= 1;
+		}
+	}
+	return crc;
+}
+
 static void OW_toBits(uint8_t ow_byte, uint8_t *ow_bits) {
 	uint8_t i;
 	for (i = 0; i < 8; i++) {
@@ -236,4 +253,5 @@ uint8_t _OW_SwapByte(uint8_t data){
 		HAL_UART_Receive(&huart2,&buff[i],1,100);
 	}
 	data=OW_toByte(buff);
+	return data;
 };

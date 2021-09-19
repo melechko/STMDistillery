@@ -1,40 +1,12 @@
 #include "ds18b20.h"
-#include "stm32f1xx_hal.h"
-#include "onewire.h"
+#include <string.h>
 
-
+owdevice_t ds18_sensors[MAX_SENSORS];
       //rom code
 uint8_t owdevices = 0;
 //uint32_t ow_tickstart=0;
 //static uint8_t curr_device=0xff;//devices index
 
-uint8_t ds18b20_crc8(uint8_t *addr, uint8_t len) {
-	uint8_t crc = 0, inbyte, i, mix;
-
-	while (len--) {
-		inbyte = *addr++;
-		for (i = 8; i; i--) {
-			mix = (crc ^ inbyte) & 0x01;
-			crc >>= 1;
-			if (mix) {
-				crc ^= 0x8C;
-			}
-			inbyte >>= 1;
-		}
-	}
-	return crc;
-}
-
-uint8_t ds18b20_init(void)
-{
-	//timer1=0;
-
-	owdevices=0;
-
-
-    OW_Search(ds18_sensors);
-    return owdevices;
-}
 float ds18b20_tconvert(uint8_t LSB, uint8_t MSB)
 {
     float data;
@@ -52,7 +24,7 @@ float ds18b20_tconvert(uint8_t LSB, uint8_t MSB)
 
     return data ;
 }
-uint8_t ds18b20_start_convert(void)
+uint8_t ds18b20_start_convert()
 {
 	uint8_t buff[2];
 	_OW_Reset();
@@ -78,5 +50,14 @@ void ds18b20_get_temp(uint8_t dev_id)
 	ds18_sensors[dev_id].temp= ds18b20_tconvert(buff[10], buff[11]);
 
 }
+
+void ds18b20_init()
+{
+	owdevices=0;
+
+
+	    OW_Search(ds18_sensors);
+
+};
 
 

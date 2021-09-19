@@ -149,7 +149,7 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
             {
                byte = (*(const unsigned char *)(&bitmap[j * byteWidth + i / 8]));
             }
-            if(byte & 0x80) SSD1306_DrawPixel(x+i, y, color);
+            if(byte & 0x80) SSD1306_DrawPixel(x+i, y, (SSD1306_COLOR_t)color);
         }
     }
 }
@@ -603,7 +603,7 @@ void SSD1306_DrawFilledCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t
 
 void SSD1306_Clear (void)
 {
-	SSD1306_Fill (0);
+	SSD1306_Fill (SSD1306_COLOR_BLACK);
     SSD1306_UpdateScreen();
 }
 void SSD1306_ON(void) {

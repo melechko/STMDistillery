@@ -1,0 +1,9 @@
+16:02:01 **** Incremental Build of configuration Default for project Src ****
+make all 
+Cannot run program "make": Launching failed
+
+Error: Program "make" not found in PATH
+PATH=[D:/Programs/STM32CubeIDE_1.0.2/STM32CubeIDE/jre/bin/server;D:/Programs/STM32CubeIDE_1.0.2/STM32CubeIDE/jre/bin;D:/Programs/STM32CubeIDE_1.0.2/STM32CubeIDE/jre/lib/amd64;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\GitExtensions\;C:\Program Files\Git\cmd;C:\Users\user\AppData\Local\Microsoft\WindowsApps;;D:\Programs\STM32CubeIDE_1.0.2\STM32CubeIDE;]
+
+16:02:01 Build Failed. 1 errors, 0 warnings. (took 67ms)
+
