@@ -25,7 +25,7 @@ void TM1638WriteBuff();
 void TM1638_Init(){
 	tm1638_keys=0;
 	memset(tm1638_buff,0x00,16);
-	tm1638_command=0x88;
+	tm1638_command=0x8f;
 	CS_L;
 	HAL_SPI_Transmit(pSPI,&tm1638_command,1,500);
 	CS_H;

@@ -191,12 +191,12 @@ int main(void)
 
 		}
 		if(gScreen){
-			//gScreen->Update();
+			gScreen->Update();
 		}
-			for(int i=0;i<8;i++){
-				TM1638_Led(i,tm1638_keys&(1<<i));
-			}
-			TM1638_Update();
+			//for(int i=0;i<8;i++){
+			//	TM1638_Led(i,tm1638_keys&(1<<i));
+			//}
+			//TM1638_Update();
 		/*	if(keys&0x80){
 				ds18b20_init();
 				SSD1306_GotoXY (0,0);
@@ -209,7 +209,7 @@ int main(void)
 			}*/
 	 // }
 	if (timer1 > 800) {
-		gScreen->Init();
+		//gScreen->Init();
 		if (owdevices) {
 			for (uint8_t i = 0; i < owdevices; i++)
 				ds18b20_get_temp(i);

@@ -28,18 +28,18 @@ void CStartScreen::Init(){
 	 // SSD1306_Puts ("Press any key", &Font_7x10, 0);
 	SSD1306_UpdateScreen();
     for(int i=0;i<8;i++)
-    	TM1638_Led(i,digitToSegment[0x10]);
+    	TM1638_Char(i,digitToSegment[0x10]);
     TM1638_Update();
 
 };
 void CStartScreen::Update() {
 	m_count++;
-	if (m_count == 50) {
+	if (m_count == 32) {
 		SSD1306_GotoXY(20, 45);
 		SSD1306_Puts("Press any key", &Font_7x10, SSD1306_COLOR_BLACK);
 		SSD1306_UpdateScreen();
 	} else {
-		if (m_count >= 100) {
+		if (m_count >= 64) {
 			SSD1306_GotoXY(20, 45);
 			SSD1306_Puts("             ", &Font_7x10, SSD1306_COLOR_BLACK);
 			SSD1306_UpdateScreen();
