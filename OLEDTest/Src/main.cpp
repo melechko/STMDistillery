@@ -165,9 +165,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 
-  uint8_t n=0;
-  uint8_t buff[16];
-  char str1[64];
+
 
 /*  SSD1306_GotoXY (0,0);
   sprintf(str1,"Device found %d", owdevices);
@@ -176,8 +174,8 @@ int main(void)
   uint16_t keys;
   while (1)
   {
-		HAL_Delay(5);
-		if (keys = TM1638_ReadKey()) {
+		keys = TM1638_ReadKey();
+		if (keys) {
 			if (gScreen) {
 				CScreen *pScreen = gScreen->ProcessKey(keys);
 				if (pScreen) {
@@ -191,26 +189,9 @@ int main(void)
 			}
 
 		}
-		if(gScreen){
-			gScreen->Update();
-		}
-			//for(int i=0;i<8;i++){
-			//	TM1638_Led(i,tm1638_keys&(1<<i));
-			//}
-			//TM1638_Update();
-		/*	if(keys&0x80){
-				ds18b20_init();
-				SSD1306_GotoXY (0,0);
-			    sprintf(str1,"Device found\n %d", owdevices);
-				SSD1306_Puts (str1, &Font_7x10, 1);
-				if(owdevices){
-				     ds18b20_start_convert();
-			    }
-				timer1=0;
-			}*/
-	 // }
+
+
 	if (timer1 > 800) {
-		//gScreen->Init();
 		if (owdevices) {
 			for (uint8_t i = 0; i < owdevices; i++)
 				ds18b20_get_temp(i);
@@ -245,7 +226,11 @@ int main(void)
 		SSD1306_Puts(str1, &Font_7x10, SSD1306_COLOR_WHITE);
 		  SSD1306_UpdateScreen();*/
 		timer1 = 0;
+		if(gScreen)
+		  gScreen->Update(1);
 	} else {
+		if(gScreen)
+		  gScreen->Update(0);
 		HAL_Delay(25);
 	}
 

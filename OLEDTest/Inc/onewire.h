@@ -29,6 +29,7 @@ typedef struct
 {
     uint8_t rom_code[8];
     uint8_t id;
+    uint32_t itemp;
     float temp;
 }owdevice_t;
 

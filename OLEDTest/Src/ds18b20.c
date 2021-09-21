@@ -1,28 +1,40 @@
 #include "ds18b20.h"
 #include <string.h>
-
+#include "TM1638.h"
 owdevice_t ds18_sensors[MAX_SENSORS];
       //rom code
 uint8_t owdevices = 0;
 //uint32_t ow_tickstart=0;
 //static uint8_t curr_device=0xff;//devices index
 
-float ds18b20_tconvert(uint8_t LSB, uint8_t MSB)
+void ds18b20_tconvert(uint8_t LSB, uint8_t MSB,owdevice_t *owdevices_)
 {
-    float data;
+    //float data;
 
     uint16_t temperature;
 
     temperature = LSB | (MSB << 8);
-
+    owdevices_->itemp=0;
 	if (temperature & 0x8000) {
 		temperature = ~temperature + 1;
-        data = 0.0 - (temperature / 16.0);
-        return data;
+		owdevices_->itemp=digitToSegment[0x10];
+		owdevices_->temp = 0.0 - (temperature / 16.0);
+       // return data;
 	}
-    data = temperature / 16.0;
+	else{
+	owdevices_->temp = temperature / 16.0;
+	  if(temperature>1599){
+		owdevices_->itemp=digitToSegment[0x10];
+		temperature-=1600;
+	  }
+	}
+	owdevices_->itemp=(owdevices_->itemp<<8)+digitToSegment[temperature / 160];
+	temperature%=160;
+	owdevices_->itemp=(owdevices_->itemp<<8)+(digitToSegment[temperature >>4]|0x80);
+	temperature&=0xf;
+	owdevices_->itemp=(owdevices_->itemp<<8)+digitToSegment[(temperature* 5)>>3];
 
-    return data ;
+    //return data ;
 }
 uint8_t ds18b20_start_convert()
 {
@@ -47,7 +59,7 @@ void ds18b20_get_temp(uint8_t dev_id)
 	buff[11]=0xff;
 	for(int i=0;i<12;i++)
 	  buff[i]=_OW_SwapByte(buff[i]);
-	ds18_sensors[dev_id].temp= ds18b20_tconvert(buff[10], buff[11]);
+	ds18b20_tconvert(buff[10], buff[11],&ds18_sensors[dev_id]);
 
 }
 
