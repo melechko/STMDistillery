@@ -39,7 +39,9 @@ private:
 	uint8_t m_start;
 	void DrawMenu();
 };
+class CInfoScreen: public CScreen{
 
+};
 
 
 

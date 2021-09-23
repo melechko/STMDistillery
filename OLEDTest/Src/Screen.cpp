@@ -101,6 +101,31 @@ CScreen* CMenuScreen::ProcessKey(uint16_t keys) {
 	if (b) {
 		DrawMenu();
 	}
+	if(keys & 0x400){
+		switch(m_curr){
+		case 0:{
+
+		}
+		break;
+		case 1:{
+
+		}
+		break;
+		case 2:{
+
+		}
+		break;
+		case 3:{
+
+		}
+		break;
+		case 4:{
+
+		}
+		break;
+
+		}
+	}
 	return NULL;
 }
 ;
