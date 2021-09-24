@@ -40,7 +40,11 @@ private:
 	void DrawMenu();
 };
 class CInfoScreen: public CScreen{
-
+public:
+	virtual ~CInfoScreen();
+	virtual CScreen * ProcessKey(uint16_t keys);
+	virtual void Init();
+	virtual void Update(uint8_t bNew);
 };
 
 

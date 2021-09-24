@@ -10,6 +10,7 @@
 #include "ssd1306.h"
 #include "TM1638.h"
 #include "ds18b20.h"
+#include <cstdio>
 
 void CScreen::DisplayLedTEMP() {
 	if (owdevices) {
@@ -35,6 +36,7 @@ char cPressAnyKey[]=     "Press any key";
 char cPressAnyKeyBlank[]="             ";
 #define MENU_SIZE 5
 char acMenu[5][7]={{"Start "},{"Setup "},{"Info  "},{"Menu 1"},{"Menu 2"}};
+char cDeviceNotFound[]="Device not found";
 //----------------------------------
 
 CStartScreen::~CStartScreen(){
@@ -112,6 +114,7 @@ CScreen* CMenuScreen::ProcessKey(uint16_t keys) {
 		}
 		break;
 		case 2:{
+			return  new CInfoScreen();
 
 		}
 		break;
@@ -141,11 +144,48 @@ void CMenuScreen::Update(uint8_t bNew){
 		DisplayLedTEMP();
 
 };
-void CMenuScreen::DrawMenu(){
-	for(int i=0;i<3;i++){
-	  SSD1306_GotoXY (2,2+20*i);
-	  SSD1306_Puts (acMenu[m_start+i], &Font_11x18,m_start+i==m_curr? SSD1306_COLOR_BLACK:SSD1306_COLOR_WHITE);
+void CMenuScreen::DrawMenu() {
+	for (int i = 0; i < 3; i++) {
+		SSD1306_GotoXY(2, 2 + 20 * i);
+		SSD1306_Puts(acMenu[m_start + i], &Font_11x18,
+				m_start + i == m_curr ?
+						SSD1306_COLOR_BLACK : SSD1306_COLOR_WHITE);
 	}
 	SSD1306_UpdateScreen();
 
+}
+;
+CInfoScreen::~CInfoScreen() {
+
+}
+;
+CScreen* CInfoScreen::ProcessKey(uint16_t keys) {
+	if (keys & 0xff00) {
+		return new CMenuScreen();
+	}
+	return NULL;
 };
+void CInfoScreen::Init() {
+	SSD1306_Fill(SSD1306_COLOR_BLACK);
+	if (owdevices) {
+		char str[20];
+		for (int i = 0; i < owdevices; i++) {
+			sprintf(str, "%llx", *((uint64_t*) ds18_sensors[i].rom_code));
+			SSD1306_GotoXY(0, 10 + 10 * i);
+			SSD1306_Puts(cDeviceNotFound, &Font_7x10, SSD1306_COLOR_WHITE);
+		}
+
+	} else {
+		SSD1306_GotoXY(0, 10);
+		SSD1306_Puts(cDeviceNotFound, &Font_7x10, SSD1306_COLOR_WHITE);
+	}
+
+	SSD1306_UpdateScreen();
+}
+;
+void CInfoScreen::Update(uint8_t bNew) {
+	if (bNew)
+		DisplayLedTEMP();
+
+}
+;
