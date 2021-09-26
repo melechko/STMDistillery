@@ -205,6 +205,7 @@ uint8_t OW_Search(owdevice_t *owdevices_) {
 		if (search_result) {
 			if (ds18b20_crc8(owdevices_[owdevices].rom_code, 7)
 					== owdevices_[owdevices].rom_code[7]) {
+				owdevices_[owdevices].bError=0;
 				owdevices++;
 			}
 		} else

@@ -46,6 +46,13 @@ public:
 	virtual void Init();
 	virtual void Update(uint8_t bNew);
 };
+class CStartBeginScreen: public CScreen{
+public:
+	virtual ~CStartBeginScreen();
+	virtual CScreen * ProcessKey(uint16_t keys);
+	virtual void Init();
+	virtual void Update(uint8_t bNew);
+};
 
 
 

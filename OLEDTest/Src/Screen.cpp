@@ -198,5 +198,17 @@ void CInfoScreen::Update(uint8_t bNew) {
 	if (bNew)
 		DisplayLedTEMP();
 
-}
-;
+};
+
+CStartBeginScreen::~CStartBeginScreen(){
+
+};
+CScreen * CStartBeginScreen::ProcessKey(uint16_t keys){
+	return NULL;
+};
+void CStartBeginScreen::Init(){
+
+};
+void CStartBeginScreen::Update(uint8_t bNew){
+
+};

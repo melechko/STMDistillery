@@ -53,7 +53,7 @@ void TM1638WriteBuff();
 void TM1638_Init(){
 	tm1638_keys=0;
 	memset(tm1638_buff,0x00,16);
-	tm1638_command=0x80;
+	tm1638_command=0x8f;
 	CS_L;
 	HAL_SPI_Transmit(pSPI,&tm1638_command,1,500);
 	CS_H;
@@ -71,7 +71,7 @@ void TM1638_Char(uint8_t num, uint8_t value){
 	tm1638_buff[num*2]=value;
 };
 void TM1638_Update(){
-	tm1638_command=0x80;
+	tm1638_command=0x8f;
 	CS_L;
 	HAL_SPI_Transmit(pSPI,&tm1638_command,1,500);
 	CS_H;

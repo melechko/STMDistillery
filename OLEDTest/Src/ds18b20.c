@@ -18,6 +18,14 @@ void ds18b20_tconvert(uint8_t LSB, uint8_t MSB,owdevice_t *owdevices_)
     uint16_t temperature;
 
     temperature = LSB | (MSB << 8);
+    if(temperature==0xffff){
+    	if(owdevices_->bError<5)
+    	  owdevices_->bError++;
+    	if(owdevices_->bError>=5)
+    	  owdevices_->itemp=0x79505000;
+    	return;
+    }
+    owdevices_->bError=0;
     owdevices_->itemp=0;
 	if (temperature & 0x8000) {
 		temperature = ~temperature + 1;

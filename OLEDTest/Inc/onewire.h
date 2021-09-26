@@ -31,6 +31,7 @@ typedef struct
     uint8_t id;
     uint32_t itemp;
     float temp;
+    uint8_t bError;
 }owdevice_t;
 
 
