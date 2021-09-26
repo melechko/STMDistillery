@@ -27,7 +27,7 @@ extern uint8_t  tm1638_keys;
 //  E |   | C
 //     ---
 //      D
-const uint8_t digitToSegment[] = {
+extern const uint8_t digitToSegment[];/* = {
   0x3f,    // 0 0b00111111
   0x06,    // 1 0b00000110
   0x5b,    // 2 0b01011011
@@ -47,5 +47,5 @@ const uint8_t digitToSegment[] = {
   0x40,    // - 0b01000000
   0x00,     // nothing 0b00000000
   0x80     // dot
-  };
+  };*/
 #endif /* TM1638_H_ */

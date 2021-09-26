@@ -9,6 +9,7 @@
 #include "onewire.h"
 extern owdevice_t ds18_sensors[MAX_SENSORS];
 extern uint8_t owdevices;
+extern uint8_t dev_index[3];
 uint8_t ds18b20_start_convert();
 
 void ds18b20_get_temp(uint8_t dev_id);

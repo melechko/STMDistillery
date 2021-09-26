@@ -4,6 +4,9 @@
 #include "stm32f1xx_hal.h"
 #include <string.h>
 #include <math.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 //------------------------------------------------
 /*#define LED_GPIO_PORT GPIOA
 #define LED_PIN GPIO_PIN_5
@@ -123,4 +126,8 @@ float BME280_ReadPressure(void);
 float BME280_ReadHumidity(void);
 float BME280_ReadAltitude(float seaLevel);
 //------------------------------------------------
+/* C++ detection */
+#ifdef __cplusplus
+}
+#endif
 #endif /* BME280_H_ */

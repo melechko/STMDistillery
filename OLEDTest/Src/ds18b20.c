@@ -1,6 +1,10 @@
 #include "ds18b20.h"
 #include <string.h>
 #include "TM1638.h"
+const uint8_t cSensor1[8]= {0x28,0xb8,0x15,0xe1,0x0c,0x00,0x00,0x6b};
+const uint8_t cSensor2[8]= {0x28,0x42,0xb7,0xe0,0x0c,0x00,0x00,0xe9};
+const uint8_t cSensor3[8]= {0x28,0x03,0xc0,0xe0,0x0c,0x00,0x00,0x97};
+uint8_t dev_index[3]={255,255,255};
 owdevice_t ds18_sensors[MAX_SENSORS];
       //rom code
 uint8_t owdevices = 0;
@@ -66,9 +70,21 @@ void ds18b20_get_temp(uint8_t dev_id)
 void ds18b20_init()
 {
 	owdevices=0;
+    dev_index[0]=255;
+    dev_index[1]=255;
+    dev_index[2]=255;
 
-
-	    OW_Search(ds18_sensors);
+	OW_Search(ds18_sensors);
+	for (int i = 0; i < owdevices; i++) {
+  	  if(memcmp(ds18_sensors[i].rom_code,cSensor1,8)==0)
+	    dev_index[0]=i;
+	  else
+	  if(memcmp(ds18_sensors[i].rom_code,cSensor2,8)==0)
+	    dev_index[1]=i;
+	  else
+	  if(memcmp(ds18_sensors[i].rom_code,cSensor3,8)==0)
+	    dev_index[2]=i;
+    }
 
 };
 

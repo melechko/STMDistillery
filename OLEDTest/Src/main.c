@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Screen.h"
+//#include "Screen.h"
 #include "fonts.h"
 #include "ssd1306.h"
 #include "BME280.h"
@@ -31,6 +31,7 @@
 #include "test.h"
 #include "bitmap.h"
 #include "onewire.h"
+#include "MainLoop.h"
 
 /* USER CODE END Includes */
 
@@ -63,7 +64,7 @@ DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 volatile uint32_t timer1=0;
-CScreen *gScreen=NULL;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -146,7 +147,7 @@ int main(void)
 
   NVIC_SetPriority(TIM4_IRQn, 15);
 
-  gScreen= new CStartScreen();
+
 
   BME280_Init();
   ds18b20_init();
@@ -156,8 +157,8 @@ int main(void)
 
   HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
   //HAL_TIM_OC_Start_IT(&htim4, TIM_CHANNEL_1);
-  TM1638_Init();
-  gScreen->Init();
+
+  MainLoopInit();
 
   /* USER CODE END 2 */
 
@@ -165,75 +166,16 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 
-
+MainLoopRun();
 
 /*  SSD1306_GotoXY (0,0);
   sprintf(str1,"Device found %d", owdevices);
   SSD1306_Puts (str1, &Font_7x10, SSD1306_COLOR_WHITE);*/
 //  SSD1306_UpdateScreen();
-  uint16_t keys;
+ // uint16_t keys;
   while (1)
   {
-		keys = TM1638_ReadKey();
-		if (keys) {
-			if (gScreen) {
-				CScreen *pScreen = gScreen->ProcessKey(keys);
-				if (pScreen) {
-					if (gScreen) {
-						delete gScreen;
-						gScreen = NULL;
-					}
-					gScreen = pScreen;
-					gScreen->Init();
-				}
-			}
-
-		}
-
-
-	if (timer1 > 800) {
-		if (owdevices) {
-			for (uint8_t i = 0; i < owdevices; i++)
-				ds18b20_get_temp(i);
-			ds18b20_start_convert();
-			/*if (owdevices) {
-				sprintf(str1, "%4.2f ", ds18_sensors[0].temp);
-				SSD1306_GotoXY(0, 0 * 20);
-				SSD1306_Puts(str1, &Font_11x18, SSD1306_COLOR_WHITE);
-				if (owdevices > 1) {
-					sprintf(str1, "%4.2f ", ds18_sensors[1].temp);
-					SSD1306_GotoXY(64, 0 * 20);
-					SSD1306_Puts(str1, &Font_11x18, SSD1306_COLOR_WHITE);
-					if (owdevices > 2) {
-						sprintf(str1, "%4.2f ", ds18_sensors[2].temp);
-						SSD1306_GotoXY(0, 1 * 20);
-						SSD1306_Puts(str1, &Font_11x18, SSD1306_COLOR_WHITE);
-						if (owdevices > 3) {
-							sprintf(str1, "%4.2f ", ds18_sensors[3].temp);
-							SSD1306_GotoXY(64, 1 * 20);
-							SSD1306_Puts(str1, &Font_11x18, SSD1306_COLOR_WHITE);
-						}
-					}
-				}
-			}*/
-		}
-		/*sprintf(str1, "%.2f'C %.2fmm    ", BME280_ReadTemperature(),
-				BME280_ReadPressure() * 0.000750061683f);
-		SSD1306_GotoXY(0, 2 * 20);
-		SSD1306_Puts(str1, &Font_7x10, SSD1306_COLOR_WHITE);
-		sprintf(str1, "%.1f%%     ", BME280_ReadHumidity());
-		SSD1306_GotoXY(0, 2 * 20 + 10);
-		SSD1306_Puts(str1, &Font_7x10, SSD1306_COLOR_WHITE);
-		  SSD1306_UpdateScreen();*/
-		timer1 = 0;
-		if(gScreen)
-		  gScreen->Update(1);
-	} else {
-		if(gScreen)
-		  gScreen->Update(0);
-		HAL_Delay(25);
-	}
-
+	  MainLoopRun();
 
 
     /* USER CODE END WHILE */
@@ -559,6 +501,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+
   /*Configure GPIO pin : PC13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -572,6 +517,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 

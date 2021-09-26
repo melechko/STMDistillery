@@ -35,8 +35,8 @@ public:
 	virtual void Init();
 	virtual void Update(uint8_t bNew);
 private:
-	uint8_t m_curr;
-	uint8_t m_start;
+	static uint8_t m_curr;
+	static uint8_t m_start;
 	void DrawMenu();
 };
 class CInfoScreen: public CScreen{
