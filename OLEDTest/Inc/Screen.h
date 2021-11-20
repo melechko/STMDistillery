@@ -52,6 +52,9 @@ public:
 	virtual CScreen * ProcessKey(uint16_t keys);
 	virtual void Init();
 	virtual void Update(uint8_t bNew);
+private:
+	uint8_t bFalse;
+	uint8_t m_count;
 };
 
 

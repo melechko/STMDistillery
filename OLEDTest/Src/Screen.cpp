@@ -37,6 +37,11 @@ char cPressAnyKeyBlank[]="             ";
 #define MENU_SIZE 5
 char acMenu[5][9]={{"Start   "},{"Setup   "},{"Info    "},{"Menu 1  "},{"Menu 2  "}};
 char cDeviceNotFound[]="Device not found";
+char cManinSensorNotFoud[]="Sensor not found!";
+char cSensor[]  ="T:    %4.2f'C      ";
+char cStopTemp[]="Stop: 99.0'C      ";
+char cPressEnter[]=     "Press ~ to start";
+char cPressEnterBlank[]="                ";
 //----------------------------------
 
 CStartScreen::~CStartScreen(){
@@ -108,7 +113,7 @@ CScreen* CMenuScreen::ProcessKey(uint16_t keys) {
 	if(keys & 0x1000){
 		switch(m_curr){
 		case 0:{
-
+            return new CStartBeginScreen();
 		}
 		break;
 		case 1:{
@@ -132,9 +137,9 @@ CScreen* CMenuScreen::ProcessKey(uint16_t keys) {
 		}
 	}
 	if(keys & 0x20)
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
-	if(keys & 0x2000)
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+	if(keys & 0x2000)
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
 	return NULL;
 }
 ;
@@ -203,12 +208,77 @@ void CInfoScreen::Update(uint8_t bNew) {
 CStartBeginScreen::~CStartBeginScreen(){
 
 };
-CScreen * CStartBeginScreen::ProcessKey(uint16_t keys){
-	return NULL;
-};
-void CStartBeginScreen::Init(){
+CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
+	if (bFalse) {
+		if (keys & 0xff00) {
+			return new CMenuScreen();
+		}
+	} else {
+		if (keys & 0x1000) {
 
+		} else {
+			if (keys & 0xff00) {
+				return new CMenuScreen();
+			}
+
+		}
+
+	}
+	return NULL;
+}
+;
+void CStartBeginScreen::Init(){
+	bFalse=1;
+	m_count=0;
+	SSD1306_Fill(SSD1306_COLOR_BLACK);
+	if(dev_index[2] != 255){
+		SSD1306_GotoXY (0,9);
+		SSD1306_Puts (cManinSensorNotFoud, &Font_7x10, SSD1306_COLOR_WHITE);
+		bFalse=0;
+	}
+	else
+	{
+		SSD1306_GotoXY (0,9);
+		SSD1306_Puts (cManinSensorNotFoud, &Font_7x10, SSD1306_COLOR_WHITE);
+		bFalse=0;
+	}
+	SSD1306_UpdateScreen();
 };
 void CStartBeginScreen::Update(uint8_t bNew){
+	if (bFalse) {
+		m_count++;
+		if (m_count == 32) {
+			SSD1306_GotoXY(20, 45);
+			SSD1306_Puts(cPressAnyKey, &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+		} else {
+			if (m_count >= 64) {
+				SSD1306_GotoXY(20, 45);
+				SSD1306_Puts(cPressAnyKeyBlank, &Font_7x10,
+						SSD1306_COLOR_WHITE);
+				SSD1306_UpdateScreen();
+				m_count = 0;
+			}
+		}
+	} else {
+		m_count++;
+		if (m_count == 32) {
+			SSD1306_GotoXY(0, 45);
+			SSD1306_Puts(cPressEnter, &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+		} else {
+			if (m_count >= 64) {
+				SSD1306_GotoXY(0, 45);
+				SSD1306_Puts(cPressEnterBlank, &Font_7x10,
+						SSD1306_COLOR_WHITE);
+				SSD1306_UpdateScreen();
+				m_count = 0;
+			}
+		}
+		if (bNew) {
 
+		}
+	}
+	if (bNew)
+		DisplayLedTEMP();
 };

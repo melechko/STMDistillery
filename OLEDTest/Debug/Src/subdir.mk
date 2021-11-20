@@ -7,6 +7,7 @@
 C_SRCS += \
 ../Src/ds18b20.c \
 ../Src/fonts.c \
+../Src/main.c \
 ../Src/onewire.c \
 ../Src/stm32f1xx_hal_msp.c \
 ../Src/stm32f1xx_it.c \
@@ -16,14 +17,15 @@ C_SRCS += \
 
 CPP_SRCS += \
 ../Src/BME280.cpp \
+../Src/MainLoop.cpp \
 ../Src/Screen.cpp \
 ../Src/TM1638.cpp \
-../Src/main.cpp \
 ../Src/ssd1306.cpp 
 
 C_DEPS += \
 ./Src/ds18b20.d \
 ./Src/fonts.d \
+./Src/main.d \
 ./Src/onewire.d \
 ./Src/stm32f1xx_hal_msp.d \
 ./Src/stm32f1xx_it.d \
@@ -33,6 +35,7 @@ C_DEPS += \
 
 OBJS += \
 ./Src/BME280.o \
+./Src/MainLoop.o \
 ./Src/Screen.o \
 ./Src/TM1638.o \
 ./Src/ds18b20.o \
@@ -48,9 +51,9 @@ OBJS += \
 
 CPP_DEPS += \
 ./Src/BME280.d \
+./Src/MainLoop.d \
 ./Src/Screen.d \
 ./Src/TM1638.d \
-./Src/main.d \
 ./Src/ssd1306.d 
 
 

@@ -135,15 +135,6 @@ int main(void)
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   SSD1306_Init();
-  /*SSD1306_DrawRectangle(0, 0, 127, 63, SSD1306_COLOR_WHITE);
-  SSD1306_DrawFilledRectangle(8, 8, 127-16, 63-16, SSD1306_COLOR_WHITE);
-  SSD1306_GotoXY (16,9);
-  SSD1306_Puts ("MoonShine", &Font_11x18, 0);
-  SSD1306_GotoXY (44,27);
-  SSD1306_Puts ("v0.1", &Font_11x18, 0);
-  //SSD1306_GotoXY (20,45);
- // SSD1306_Puts ("Press any key", &Font_7x10, 0);
-  SSD1306_UpdateScreen();*/
 
   NVIC_SetPriority(TIM4_IRQn, 15);
 
@@ -165,14 +156,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-
-MainLoopRun();
-
-/*  SSD1306_GotoXY (0,0);
-  sprintf(str1,"Device found %d", owdevices);
-  SSD1306_Puts (str1, &Font_7x10, SSD1306_COLOR_WHITE);*/
-//  SSD1306_UpdateScreen();
- // uint16_t keys;
   while (1)
   {
 	  MainLoopRun();
@@ -502,7 +485,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PC13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
@@ -520,8 +503,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PA9 */
   GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
