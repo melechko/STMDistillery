@@ -56,7 +56,13 @@ private:
 	uint8_t bFalse;
 	uint8_t m_count;
 };
-
+class CWorkScreen: public CScreen{
+public:
+	virtual ~CWorkScreen();
+	virtual CScreen * ProcessKey(uint16_t keys);
+	virtual void Init();
+	virtual void Update(uint8_t bNew);
+};
 
 
 #endif /* SCREEN_H_ */
