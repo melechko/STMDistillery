@@ -76,8 +76,8 @@ all: main-build
 main-build: OLEDTest.elf secondary-outputs
 
 # Tool invocations
-OLEDTest.elf: $(OBJS) $(USER_OBJS) /Users/melechko/Documents/Projects/STM/OLEDTest/STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "OLEDTest.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"/Users/melechko/Documents/Projects/STM/OLEDTest/STM32F103C8TX_FLASH.ld" -Wl,-Map="OLEDTest.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+OLEDTest.elf: $(OBJS) $(USER_OBJS) D:\Documents\Projects\STMDistillery\OLEDTest\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "OLEDTest.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Documents\Projects\STMDistillery\OLEDTest\STM32F103C8TX_FLASH.ld" -Wl,-Map="OLEDTest.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
