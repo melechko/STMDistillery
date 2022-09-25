@@ -39,11 +39,15 @@ char acMenu[5][9]={{"Start   "},{"Setup   "},{"Info    "},{"Menu 1  "},{"Menu 2 
 char cDeviceNotFound[]="Device not found";
 char cManinSensorNotFoud[]="Sensor not found!";
 char cSensor[]  =   "t:     'C";
-char cStopTemp[]="Stop: 99.0'C";
+char cStopTemp[]="Stop:  %3.1f'C ";
 char cPressEnter[]=     "Press ~ to start";
 char cPressEnterBlank[]="                ";
 //----------------------------------
-
+void PrintStopTemp(uint16_t StopTemp){
+	char Str[16];
+	sprintf(Str,cStopTemp, StopTemp/10.0);
+	SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
+};
 CStartScreen::~CStartScreen(){
 
 };
@@ -216,26 +220,41 @@ CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 	} else {
 		if (keys & 0x1000) {
 
-		} else {
-			if (keys & 0xff00) {
+		}
+		else
+		if(keys & 0x400){
+			m_StopTemp--;
+			SSD1306_GotoXY (7,19);
+			PrintStopTemp(m_StopTemp);
+			SSD1306_UpdateScreen();
+		}
+		else
+		if(keys & 0x800){
+			m_StopTemp++;
+			SSD1306_GotoXY (7,19);
+			PrintStopTemp(m_StopTemp);
+			SSD1306_UpdateScreen();
+		}
+		else
+		if (keys & 0xff00) {
 				return new CMenuScreen();
 			}
 
-		}
 
 	}
+
 	return NULL;
-}
-;
+};
 void CStartBeginScreen::Init(){
 	bFalse=1;
 	m_count=0;
+	m_StopTemp=990;
 	SSD1306_Fill(SSD1306_COLOR_BLACK);
 	if(dev_index[/*2*/0] != 255){
 		SSD1306_GotoXY (7+21,9);
 		SSD1306_Puts (cSensor, &Font_7x10, SSD1306_COLOR_WHITE);
 		SSD1306_GotoXY (7,19);
-		SSD1306_Puts (cStopTemp, &Font_7x10, SSD1306_COLOR_WHITE);
+		PrintStopTemp(m_StopTemp);
 		bFalse=0;
 	}
 	else

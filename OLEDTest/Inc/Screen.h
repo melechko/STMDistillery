@@ -53,6 +53,7 @@ public:
 	virtual void Init();
 	virtual void Update(uint8_t bNew);
 private:
+	uint16_t m_StopTemp;
 	uint8_t bFalse;
 	uint8_t m_count;
 };
