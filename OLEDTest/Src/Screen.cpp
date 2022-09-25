@@ -13,15 +13,15 @@
 #include <cstdio>
 
 void CScreen::DisplayLedTEMP() {
-	if (dev_index[2] != 255) {
+	if (dev_index[0] != 255) {
 		for (int i = 0; i < 4; i++)
-			TM1638_Char(i, (ds18_sensors[dev_index[2]].itemp >> (8 * (3 - i))) & 0xff);
+			TM1638_Char(i, (ds18_sensors[dev_index[0]].itemp >> (8 * (3 - i))) & 0xff);
 	} else
 		for (int i = 0; i < 4; i++)
 			TM1638_Char(i, digitToSegment[0x10]);
-	if (dev_index[0] != 255) {
+	if (dev_index[1] != 255) {
 		for (int i = 0; i < 4; i++)
-			TM1638_Char(i + 4, (ds18_sensors[dev_index[0]].itemp >> (8 * (3 - i))) & 0xff);
+			TM1638_Char(i + 4, (ds18_sensors[dev_index[1]].itemp >> (8 * (3 - i))) & 0xff);
 	} else
 		for (int i = 0; i < 4; i++)
 			TM1638_Char(i + 4, digitToSegment[0x10]);
@@ -231,7 +231,7 @@ void CStartBeginScreen::Init(){
 	bFalse=1;
 	m_count=0;
 	SSD1306_Fill(SSD1306_COLOR_BLACK);
-	if(dev_index[/*2*/1] != 255){
+	if(dev_index[/*2*/0] != 255){
 		SSD1306_GotoXY (7+21,9);
 		SSD1306_Puts (cSensor, &Font_7x10, SSD1306_COLOR_WHITE);
 		SSD1306_GotoXY (7,19);
@@ -279,7 +279,7 @@ void CStartBeginScreen::Update(uint8_t bNew){
 		}
 		if (bNew) {
 			char Str[8];
-			sprintf(Str,"%4.2f",ds18_sensors[dev_index[/*2*/1]].temp );
+			sprintf(Str,"%4.2f",ds18_sensors[dev_index[/*2*/0]].temp );
 			SSD1306_GotoXY (7+21+21,9);
 			SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
 			SSD1306_UpdateScreen();

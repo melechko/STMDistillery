@@ -14978,9 +14978,9 @@ void CScreen::DisplayLedTEMP() {
  80059ee:	b086      	sub	sp, #24
  80059f0:	af00      	add	r7, sp, #0
  80059f2:	6078      	str	r0, [r7, #4]
-	if (dev_index[2] != 255) {
+	if (dev_index[0] != 255) {
  80059f4:	4b39      	ldr	r3, [pc, #228]	; (8005adc <_ZN7CScreen14DisplayLedTEMPEv+0xf0>)
- 80059f6:	789b      	ldrb	r3, [r3, #2]
+ 80059f6:	781b      	ldrb	r3, [r3, #0]
  80059f8:	2bff      	cmp	r3, #255	; 0xff
  80059fa:	d01f      	beq.n	8005a3c <_ZN7CScreen14DisplayLedTEMPEv+0x50>
 		for (int i = 0; i < 4; i++)
@@ -14989,11 +14989,11 @@ void CScreen::DisplayLedTEMP() {
  8005a00:	697b      	ldr	r3, [r7, #20]
  8005a02:	2b03      	cmp	r3, #3
  8005a04:	dc2b      	bgt.n	8005a5e <_ZN7CScreen14DisplayLedTEMPEv+0x72>
-			TM1638_Char(i, (ds18_sensors[dev_index[2]].itemp >> (8 * (3 - i))) & 0xff);
+			TM1638_Char(i, (ds18_sensors[dev_index[0]].itemp >> (8 * (3 - i))) & 0xff);
  8005a06:	697b      	ldr	r3, [r7, #20]
  8005a08:	b2d8      	uxtb	r0, r3
  8005a0a:	4b34      	ldr	r3, [pc, #208]	; (8005adc <_ZN7CScreen14DisplayLedTEMPEv+0xf0>)
- 8005a0c:	789b      	ldrb	r3, [r3, #2]
+ 8005a0c:	781b      	ldrb	r3, [r3, #0]
  8005a0e:	4619      	mov	r1, r3
  8005a10:	4a33      	ldr	r2, [pc, #204]	; (8005ae0 <_ZN7CScreen14DisplayLedTEMPEv+0xf4>)
  8005a12:	460b      	mov	r3, r1
@@ -15035,9 +15035,9 @@ void CScreen::DisplayLedTEMP() {
  8005a58:	3301      	adds	r3, #1
  8005a5a:	613b      	str	r3, [r7, #16]
  8005a5c:	e7f0      	b.n	8005a40 <_ZN7CScreen14DisplayLedTEMPEv+0x54>
-	if (dev_index[0] != 255) {
+	if (dev_index[1] != 255) {
  8005a5e:	4b1f      	ldr	r3, [pc, #124]	; (8005adc <_ZN7CScreen14DisplayLedTEMPEv+0xf0>)
- 8005a60:	781b      	ldrb	r3, [r3, #0]
+ 8005a60:	785b      	ldrb	r3, [r3, #1]
  8005a62:	2bff      	cmp	r3, #255	; 0xff
  8005a64:	d021      	beq.n	8005aaa <_ZN7CScreen14DisplayLedTEMPEv+0xbe>
 		for (int i = 0; i < 4; i++)
@@ -15046,13 +15046,13 @@ void CScreen::DisplayLedTEMP() {
  8005a6a:	68fb      	ldr	r3, [r7, #12]
  8005a6c:	2b03      	cmp	r3, #3
  8005a6e:	dc2f      	bgt.n	8005ad0 <_ZN7CScreen14DisplayLedTEMPEv+0xe4>
-			TM1638_Char(i + 4, (ds18_sensors[dev_index[0]].itemp >> (8 * (3 - i))) & 0xff);
+			TM1638_Char(i + 4, (ds18_sensors[dev_index[1]].itemp >> (8 * (3 - i))) & 0xff);
  8005a70:	68fb      	ldr	r3, [r7, #12]
  8005a72:	b2db      	uxtb	r3, r3
  8005a74:	3304      	adds	r3, #4
  8005a76:	b2d8      	uxtb	r0, r3
  8005a78:	4b18      	ldr	r3, [pc, #96]	; (8005adc <_ZN7CScreen14DisplayLedTEMPEv+0xf0>)
- 8005a7a:	781b      	ldrb	r3, [r3, #0]
+ 8005a7a:	785b      	ldrb	r3, [r3, #1]
  8005a7c:	4619      	mov	r1, r3
  8005a7e:	4a18      	ldr	r2, [pc, #96]	; (8005ae0 <_ZN7CScreen14DisplayLedTEMPEv+0xf4>)
  8005a80:	460b      	mov	r3, r1
@@ -16126,9 +16126,9 @@ void CStartBeginScreen::Init(){
 	SSD1306_Fill(SSD1306_COLOR_BLACK);
  80061b4:	2000      	movs	r0, #0
  80061b6:	f001 f9bb 	bl	8007530 <SSD1306_Fill>
-	if(dev_index[/*2*/1] != 255){
+	if(dev_index[/*2*/0] != 255){
  80061ba:	4b16      	ldr	r3, [pc, #88]	; (8006214 <_ZN17CStartBeginScreen4InitEv+0x74>)
- 80061bc:	785b      	ldrb	r3, [r3, #1]
+ 80061bc:	781b      	ldrb	r3, [r3, #0]
  80061be:	2bff      	cmp	r3, #255	; 0xff
  80061c0:	d015      	beq.n	80061ee <_ZN17CStartBeginScreen4InitEv+0x4e>
 		SSD1306_GotoXY (7+21,9);
@@ -16301,9 +16301,9 @@ void CStartBeginScreen::Update(uint8_t bNew){
  80062e0:	2b00      	cmp	r3, #0
  80062e2:	d021      	beq.n	8006328 <_ZN17CStartBeginScreen6UpdateEh+0x100>
 			char Str[8];
-			sprintf(Str,"%4.2f",ds18_sensors[dev_index[/*2*/1]].temp );
+			sprintf(Str,"%4.2f",ds18_sensors[dev_index[/*2*/0]].temp );
  80062e4:	4b1b      	ldr	r3, [pc, #108]	; (8006354 <_ZN17CStartBeginScreen6UpdateEh+0x12c>)
- 80062e6:	785b      	ldrb	r3, [r3, #1]
+ 80062e6:	781b      	ldrb	r3, [r3, #0]
  80062e8:	4619      	mov	r1, r3
  80062ea:	4a1b      	ldr	r2, [pc, #108]	; (8006358 <_ZN17CStartBeginScreen6UpdateEh+0x130>)
  80062ec:	460b      	mov	r3, r1
@@ -16804,9 +16804,9 @@ void ds18b20_tconvert(uint8_t LSB, uint8_t MSB,owdevice_t *owdevices_)
  800668a:	89fb      	ldrh	r3, [r7, #14]
  800668c:	f5b3 6fc8 	cmp.w	r3, #1600	; 0x640
  8006690:	d308      	bcc.n	80066a4 <ds18b20_tconvert+0xe8>
-		owdevices_->itemp=digitToSegment[0x10];
+		owdevices_->itemp=digitToSegment[0x1];
  8006692:	4b25      	ldr	r3, [pc, #148]	; (8006728 <ds18b20_tconvert+0x16c>)
- 8006694:	7c1b      	ldrb	r3, [r3, #16]
+ 8006694:	785b      	ldrb	r3, [r3, #1]
  8006696:	461a      	mov	r2, r3
  8006698:	683b      	ldr	r3, [r7, #0]
  800669a:	60da      	str	r2, [r3, #12]
@@ -16816,6 +16816,7 @@ void ds18b20_tconvert(uint8_t LSB, uint8_t MSB,owdevice_t *owdevices_)
  80066a2:	81fb      	strh	r3, [r7, #14]
 	  }
 	}
+
 	owdevices_->itemp=(owdevices_->itemp<<8)+digitToSegment[temperature / 160];
  80066a4:	683b      	ldr	r3, [r7, #0]
  80066a6:	68db      	ldr	r3, [r3, #12]

@@ -1,7 +1,7 @@
 #include "ds18b20.h"
 #include <string.h>
 #include "TM1638.h"
-const uint8_t cSensor1[8]= {0x28,0xb8,0x15,0xe1,0x0c,0x00,0x00,0x6b};
+const uint8_t cSensor1[8]= {0x28,0xa3,0x0f,0x78,0x0e,0x00,0x00,0x34};
 const uint8_t cSensor3[8]= {0x28,0x42,0xb7,0xe0,0x0c,0x00,0x00,0xe9};
 const uint8_t cSensor2[8]= {0x28,0x03,0xc0,0xe0,0x0c,0x00,0x00,0x97};
 uint8_t dev_index[3]={255,255,255};
@@ -36,10 +36,11 @@ void ds18b20_tconvert(uint8_t LSB, uint8_t MSB,owdevice_t *owdevices_)
 	else{
 	owdevices_->temp = temperature / 16.0;
 	  if(temperature>1599){
-		owdevices_->itemp=digitToSegment[0x10];
+		owdevices_->itemp=digitToSegment[0x1];
 		temperature-=1600;
 	  }
 	}
+
 	owdevices_->itemp=(owdevices_->itemp<<8)+digitToSegment[temperature / 160];
 	temperature%=160;
 	owdevices_->itemp=(owdevices_->itemp<<8)+(digitToSegment[temperature >>4]|0x80);
