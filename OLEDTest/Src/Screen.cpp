@@ -10,6 +10,7 @@
 #include "ssd1306.h"
 #include "TM1638.h"
 #include "ds18b20.h"
+#include "BME280.h"
 #include <cstdio>
 
 void CScreen::DisplayLedTEMP() {
@@ -212,6 +213,7 @@ void CInfoScreen::Update(uint8_t bNew) {
 CStartBeginScreen::~CStartBeginScreen(){
 
 };
+extern TIM_HandleTypeDef htim1;
 CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 	if (bFalse) {
 		if (keys & 0xff00) {
@@ -227,6 +229,7 @@ CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 			SSD1306_GotoXY (7,19);
 			PrintStopTemp(m_StopTemp);
 			SSD1306_UpdateScreen();
+			HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
 		}
 		else
 		if(keys & 0x800){
@@ -302,7 +305,18 @@ void CStartBeginScreen::Update(uint8_t bNew){
 			SSD1306_GotoXY (7+21+21,9);
 			SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
 			SSD1306_UpdateScreen();
+			if(m_StopTemp<(ds18_sensors[dev_index[/*2*/0]].temp*10.0)){
+				HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
+			}
 		}
+	}
+	if((m_count)==1){
+		char Str[16];
+		SSD1306_GotoXY (7,29);
+		sprintf(Str, "%.2f'C %.2fmm    ", BME280_ReadTemperature(),
+						BME280_ReadPressure() * 0.000750063755f);
+		SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
+		SSD1306_UpdateScreen();
 	}
 	if (bNew)
 		DisplayLedTEMP();

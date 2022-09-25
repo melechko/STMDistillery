@@ -249,10 +249,10 @@ void BME280_Init(void)
 	while (BME280_ReadStatus() & BME280_STATUS_IM_UPDATE) ;
 	BME280_ReadCoefficients();
 	BME280_SetStandby(BME280_STBY_1000);
-	BME280_SetFilter(BME280_FILTER_4);
-	BME280_SetOversamplingTemper(BME280_OSRS_T_x4);
-	BME280_SetOversamplingPressure(BME280_OSRS_P_x2);
-	BME280_SetOversamplingHum(BME280_OSRS_H_x1);
+	BME280_SetFilter(BME280_FILTER_16);
+	BME280_SetOversamplingTemper(BME280_OSRS_T_x16);
+	BME280_SetOversamplingPressure(BME280_OSRS_P_x16);
+	BME280_SetOversamplingHum(BME280_OSRS_H_x16);
 	value32 = BME280_ReadReg(BME280_REG_CTRL_MEAS);
 	value32 |= BME280_ReadReg(BME280_REG_CTRL_HUM) << 8;
 	BME280_SetMode(BME280_MODE_NORMAL);
