@@ -18,7 +18,7 @@
 #include "bitmap.h"
 #include "onewire.h"
 #include "MainLoop.h"
-
+#include "PowerRelay.h"
 CScreen *gScreen=NULL;
 void MainLoopInit(){
 	gScreen= new CStartScreen();
@@ -29,6 +29,8 @@ void MainLoopRun(){
 	uint16_t keys;
 	keys = TM1638_ReadKey();
 		if (keys) {
+			if((PowerRelayCheck()&1)&&(keys&0x8000))
+				PowerRelayOff();
 			if (gScreen) {
 				CScreen *pScreen = gScreen->ProcessKey(keys);
 				if (pScreen) {
@@ -79,6 +81,7 @@ void MainLoopRun(){
 		SSD1306_Puts(str1, &Font_7x10, SSD1306_COLOR_WHITE);
 		  SSD1306_UpdateScreen();*/
 		timer1 = 0;
+		PowerRelayLimitCheck();
 		if(gScreen)
 		  gScreen->Update(1);
 	} else {

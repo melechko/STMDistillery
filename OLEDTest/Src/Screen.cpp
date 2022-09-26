@@ -11,6 +11,7 @@
 #include "TM1638.h"
 #include "ds18b20.h"
 #include "BME280.h"
+#include "PowerRelay.h"
 #include <cstdio>
 
 void CScreen::DisplayLedTEMP() {
@@ -44,9 +45,9 @@ char cStopTemp[]="Stop:  %3.1f'C ";
 char cPressEnter[]=     "Press ~ to start";
 char cPressEnterBlank[]="                ";
 //----------------------------------
-void PrintStopTemp(uint16_t StopTemp){
+void PrintStopTemp(){
 	char Str[16];
-	sprintf(Str,cStopTemp, StopTemp/10.0);
+	sprintf(Str,cStopTemp, g_StopTemp/10.0);
 	SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
 };
 CStartScreen::~CStartScreen(){
@@ -176,7 +177,7 @@ CInfoScreen::~CInfoScreen() {
 }
 ;
 CScreen* CInfoScreen::ProcessKey(uint16_t keys) {
-	if (keys & 0xff00) {
+	if (keys & 0x7f00) {
 		return new CMenuScreen();
 	}
 	return NULL;
@@ -221,25 +222,32 @@ CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 		}
 	} else {
 		if (keys & 0x1000) {
-
+           PowerRelayOn();
 		}
 		else
 		if(keys & 0x400){
-			m_StopTemp--;
-			SSD1306_GotoXY (7,19);
-			PrintStopTemp(m_StopTemp);
-			SSD1306_UpdateScreen();
-			HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
+			if(g_StopTemp>401){
+			  g_StopTemp--;
+			  SSD1306_GotoXY (7,19);
+			  PrintStopTemp();
+			  SSD1306_UpdateScreen();
+			}
+			else
+			  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
 		}
 		else
 		if(keys & 0x800){
-			m_StopTemp++;
-			SSD1306_GotoXY (7,19);
-			PrintStopTemp(m_StopTemp);
-			SSD1306_UpdateScreen();
+			if(g_StopTemp<1009){
+			  g_StopTemp++;
+			  SSD1306_GotoXY (7,19);
+			  PrintStopTemp();
+			  SSD1306_UpdateScreen();
+			}
+			else
+			  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
 		}
 		else
-		if (keys & 0xff00) {
+		if (keys & 0x2000) {
 				return new CMenuScreen();
 			}
 
@@ -251,13 +259,13 @@ CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 void CStartBeginScreen::Init(){
 	bFalse=1;
 	m_count=0;
-	m_StopTemp=990;
+	//m_StopTemp=990;
 	SSD1306_Fill(SSD1306_COLOR_BLACK);
 	if(dev_index[/*2*/0] != 255){
 		SSD1306_GotoXY (7+21,9);
 		SSD1306_Puts (cSensor, &Font_7x10, SSD1306_COLOR_WHITE);
 		SSD1306_GotoXY (7,19);
-		PrintStopTemp(m_StopTemp);
+		PrintStopTemp();
 		bFalse=0;
 	}
 	else
@@ -305,9 +313,7 @@ void CStartBeginScreen::Update(uint8_t bNew){
 			SSD1306_GotoXY (7+21+21,9);
 			SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
 			SSD1306_UpdateScreen();
-			if(m_StopTemp<(ds18_sensors[dev_index[/*2*/0]].temp*10.0)){
-				HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
-			}
+
 		}
 	}
 	if((m_count)==1){

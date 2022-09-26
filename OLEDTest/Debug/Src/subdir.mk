@@ -18,6 +18,7 @@ C_SRCS += \
 CPP_SRCS += \
 ../Src/BME280.cpp \
 ../Src/MainLoop.cpp \
+../Src/PowerRelay.cpp \
 ../Src/Screen.cpp \
 ../Src/TM1638.cpp \
 ../Src/ssd1306.cpp 
@@ -36,6 +37,7 @@ C_DEPS += \
 OBJS += \
 ./Src/BME280.o \
 ./Src/MainLoop.o \
+./Src/PowerRelay.o \
 ./Src/Screen.o \
 ./Src/TM1638.o \
 ./Src/ds18b20.o \
@@ -52,6 +54,7 @@ OBJS += \
 CPP_DEPS += \
 ./Src/BME280.d \
 ./Src/MainLoop.d \
+./Src/PowerRelay.d \
 ./Src/Screen.d \
 ./Src/TM1638.d \
 ./Src/ssd1306.d 
