@@ -37,7 +37,7 @@ char cVersion[]="v0.1";
 char cPressAnyKey[]=     "Press any key";
 char cPressAnyKeyBlank[]="             ";
 #define MENU_SIZE 5
-char acMenu[5][9]={{"Start   "},{"Setup   "},{"Info    "},{"Menu 1  "},{"Menu 2  "}};
+char acMenu[5][9]={{"Distill "},{"Boil    "},{"Info    "},{"Reset   "},{"Menu 2  "}};
 char cDeviceNotFound[]="Device not found";
 char cManinSensorNotFoud[]="Sensor not found!";
 char cSensor[]  =   "t:     'C";
@@ -123,7 +123,7 @@ CScreen* CMenuScreen::ProcessKey(uint16_t keys) {
 		}
 		break;
 		case 1:{
-
+			return new CBoilScreen();
 		}
 		break;
 		case 2:{
@@ -132,10 +132,11 @@ CScreen* CMenuScreen::ProcessKey(uint16_t keys) {
 		}
 		break;
 		case 3:{
-
+			NVIC_SystemReset();
 		}
 		break;
 		case 4:{
+
 
 		}
 		break;
@@ -210,7 +211,7 @@ void CInfoScreen::Update(uint8_t bNew) {
 		DisplayLedTEMP();
 
 };
-
+//********************************************************************************************************************************************************************
 CStartBeginScreen::~CStartBeginScreen(){
 
 };
@@ -223,10 +224,14 @@ CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 	} else {
 		if (keys & 0x1000) {
            PowerRelayOn();
+           SSD1306_GotoXY(0, 45);
+           				SSD1306_Puts(cPressEnterBlank, &Font_7x10,
+           						SSD1306_COLOR_WHITE);
+           SSD1306_UpdateScreen();
 		}
 		else
-		if(keys & 0x400){
-			if(g_StopTemp>401){
+		if((!keys)&&(tm1638_keys==0x4)&&(m_count&1)){
+			if(g_StopTemp>301){
 			  g_StopTemp--;
 			  SSD1306_GotoXY (7,19);
 			  PrintStopTemp();
@@ -236,7 +241,7 @@ CScreen* CStartBeginScreen::ProcessKey(uint16_t keys) {
 			  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
 		}
 		else
-		if(keys & 0x800){
+		if((!keys)&&(tm1638_keys==0x8)&&(m_count&1)){
 			if(g_StopTemp<1009){
 			  g_StopTemp++;
 			  SSD1306_GotoXY (7,19);
@@ -279,6 +284,7 @@ void CStartBeginScreen::Init(){
 void CStartBeginScreen::Update(uint8_t bNew){
 	if (bFalse) {
 		m_count++;
+
 		if (m_count == 32) {
 			SSD1306_GotoXY(20, 45);
 			SSD1306_Puts(cPressAnyKey, &Font_7x10, SSD1306_COLOR_WHITE);
@@ -294,6 +300,7 @@ void CStartBeginScreen::Update(uint8_t bNew){
 		}
 	} else {
 		m_count++;
+		if(!PowerRelayCheck()){
 		if (m_count == 32) {
 			SSD1306_GotoXY(0, 45);
 			SSD1306_Puts(cPressEnter, &Font_7x10, SSD1306_COLOR_WHITE);
@@ -306,6 +313,7 @@ void CStartBeginScreen::Update(uint8_t bNew){
 				SSD1306_UpdateScreen();
 				m_count = 0;
 			}
+		}
 		}
 		if (bNew) {
 			char Str[8];
@@ -324,6 +332,130 @@ void CStartBeginScreen::Update(uint8_t bNew){
 		SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
 		SSD1306_UpdateScreen();
 	}
+	if (bNew)
+		DisplayLedTEMP();
+};
+//********************************************************************************************************************************************************************
+CBoilScreen::~CBoilScreen(){
+
+};
+extern TIM_HandleTypeDef htim1;
+CScreen* CBoilScreen::ProcessKey(uint16_t keys) {
+	if (bFalse) {
+		if (keys & 0xff00) {
+			return new CMenuScreen();
+		}
+	} else {
+		if (keys & 0x1000) {
+           PowerRelayOn();
+           SSD1306_GotoXY(0, 45);
+           				SSD1306_Puts(cPressEnterBlank, &Font_7x10,
+           						SSD1306_COLOR_WHITE);
+           SSD1306_UpdateScreen();
+		}
+		else
+		if((!keys)&&(tm1638_keys==0x4)&&(m_count&1)){
+			if(g_StopTemp>301){
+			  g_StopTemp--;
+			  SSD1306_GotoXY (7,19);
+			  PrintStopTemp();
+			  SSD1306_UpdateScreen();
+			}
+			else
+			  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
+		}
+		else
+		if((!keys)&&(tm1638_keys==0x8)&&(m_count&1)){
+			if(g_StopTemp<1009){
+			  g_StopTemp++;
+			  SSD1306_GotoXY (7,19);
+			  PrintStopTemp();
+			  SSD1306_UpdateScreen();
+			}
+			else
+			  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
+		}
+		else
+		if (keys & 0x2000) {
+				return new CMenuScreen();
+			}
+
+
+	}
+
+	return NULL;
+};
+void CBoilScreen::Init(){
+	bFalse=1;
+	m_count=0;
+	//m_StopTemp=990;
+	SSD1306_Fill(SSD1306_COLOR_BLACK);
+	if(dev_index[/*2*/0] != 255){
+		SSD1306_GotoXY (7+21,9);
+		SSD1306_Puts (cSensor, &Font_7x10, SSD1306_COLOR_WHITE);
+		SSD1306_GotoXY (7,19);
+		PrintStopTemp();
+		bFalse=0;
+	}
+	else
+	{
+		SSD1306_GotoXY (0,9);
+		SSD1306_Puts (cManinSensorNotFoud, &Font_7x10, SSD1306_COLOR_WHITE);
+		bFalse=1;
+	}
+	SSD1306_UpdateScreen();
+};
+void CBoilScreen::Update(uint8_t bNew){
+	if (bFalse) {
+		m_count++;
+
+		if (m_count == 32) {
+			SSD1306_GotoXY(20, 45);
+			SSD1306_Puts(cPressAnyKey, &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+		} else {
+			if (m_count >= 64) {
+				SSD1306_GotoXY(20, 45);
+				SSD1306_Puts(cPressAnyKeyBlank, &Font_7x10,
+						SSD1306_COLOR_WHITE);
+				SSD1306_UpdateScreen();
+				m_count = 0;
+			}
+		}
+	} else {
+		m_count++;
+		if(!PowerRelayCheck()){
+		if (m_count == 32) {
+			SSD1306_GotoXY(0, 45);
+			SSD1306_Puts(cPressEnter, &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+		} else {
+			if (m_count >= 64) {
+				SSD1306_GotoXY(0, 45);
+				SSD1306_Puts(cPressEnterBlank, &Font_7x10,
+						SSD1306_COLOR_WHITE);
+				SSD1306_UpdateScreen();
+				m_count = 0;
+			}
+		}
+		}
+		if (bNew) {
+			char Str[8];
+			sprintf(Str,"%4.2f",ds18_sensors[dev_index[/*2*/0]].temp );
+			SSD1306_GotoXY (7+21+21,9);
+			SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+
+		}
+	}
+/*	if((m_count)==1){
+		char Str[16];
+		SSD1306_GotoXY (7,29);
+		sprintf(Str, "%.2f'C %.2fmm    ", BME280_ReadTemperature(),
+						BME280_ReadPressure() * 0.000750063755f);
+		SSD1306_Puts (Str, &Font_7x10, SSD1306_COLOR_WHITE);
+		SSD1306_UpdateScreen();
+	}*/
 	if (bNew)
 		DisplayLedTEMP();
 };

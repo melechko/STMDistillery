@@ -31,6 +31,7 @@ void MainLoopRun(){
 		if (keys) {
 			if((PowerRelayCheck()&1)&&(keys&0x8000))
 				PowerRelayOff();
+		}
 			if (gScreen) {
 				CScreen *pScreen = gScreen->ProcessKey(keys);
 				if (pScreen) {
@@ -43,7 +44,7 @@ void MainLoopRun(){
 				}
 			}
 
-		}
+
 
 
 	if (timer1 > 800) {
